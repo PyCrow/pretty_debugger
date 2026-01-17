@@ -3,7 +3,11 @@ import unittest
 
 from pretty_logger import pretty_wrapper
 
-logging.basicConfig(filename='pretty.log', format='%(message)s')
+logging.basicConfig(
+    filename='pretty.log',
+    format='%(message)s',
+    encoding='utf-8',
+)
 logger = logging.getLogger(__name__)
 
 

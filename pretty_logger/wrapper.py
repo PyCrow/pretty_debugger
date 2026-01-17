@@ -1,6 +1,5 @@
 import inspect
-import logging
-from logging import Logger
+from logging import Logger, WARNING
 
 from .cache import PrettyCache
 
@@ -29,7 +28,8 @@ def pretty_wrapper(logger: Logger, debug_level: int = None):
     ┊  └X <Exception('SOME TEST EXCEPTION')>
     ┷
 
-    :param logger: Logger object must contain a 'level' attribute and a 'log' method.
+    :param logger: Logger object must contain the 'level' attribute,
+        the 'log' method, and HAVE THE 'utf-8' ENCODING.
     :param debug_level: Custom debug level. If not specified, the
         logger debug level or WARNING level is used, whichever is higher.
     :return: Wrapped function
@@ -39,9 +39,7 @@ def pretty_wrapper(logger: Logger, debug_level: int = None):
         raise TypeError("Logger object must contain a 'level' attribute"
                         " and a 'log' method.")
     if debug_level is None:
-        debug_level = max(logger.level, logging.WARNING)
-    print(logger.level)
-    print(debug_level)
+        debug_level = max(logger.level, WARNING)
 
     def _wrapper(func):
         cache = PrettyCache()
