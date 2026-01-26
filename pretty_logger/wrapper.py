@@ -3,9 +3,7 @@ from logging import Logger, WARNING
 from time import time
 
 from .cache import PrettyCache
-
-
-non_exponent = lambda n, round_to: f"%.{round_to}f" % n
+from .utils import log, non_expo
 
 
 def pretty_wrapper(
@@ -68,21 +66,21 @@ def pretty_wrapper(
 
             # Start line
             if cache.level == 0:
-                logger.log(debug_level, "┯")
+                log(logger, debug_level, "┯")
 
             # Print args and kwargs
             if not args and not kwargs:
-                logger.log(debug_level, f"{prefix}├─⮞{func.__name__}()")
+                log(logger, debug_level, f"{prefix}├─⮞{func.__name__}()")
             else:
-                logger.log(debug_level, f"{prefix}├─⮞{func.__name__}(")
+                log(logger, debug_level, f"{prefix}├─⮞{func.__name__}(")
                 args_kwargs = dict(zip(
                     list(inspect.signature(func).parameters.keys()),
                     args
                 ))
                 args_kwargs.update(kwargs)
                 for k, v in args_kwargs.items():
-                    logger.log(debug_level, f"{prefix}│{sep * 2}{k}={v},")
-                logger.log(debug_level, f"{prefix}│{sep})")
+                    log(logger, debug_level, f"{prefix}│{sep * 2}{k}={v},")
+                log(logger, debug_level, f"{prefix}│{sep})")
             cache.level += 1
 
             # Execution
@@ -94,17 +92,16 @@ def pretty_wrapper(
                 msg = f"X <{repr(e)}>"
                 raise
             else:
-                msg = f"⮞{result}"
+                msg = f"⮞ {result}"
             finally:
-                stop_time = non_exponent(time() - start_time, round_exec_time)
-                logger.log(debug_level,
-                           f"{get_prefix()}└{msg}  ({stop_time}s)")
+                stop_time = non_expo(time() - start_time, round_exec_time)
+                log(logger, debug_level, f"{get_prefix()}└{msg}  ({stop_time}s)")
 
                 cache.level -= 1
 
                 # Finish line
                 if cache.level == 0:
-                    logger.log(debug_level, "┷")
+                    log(logger, debug_level, "┷")
 
             return result
         return _logged_function
