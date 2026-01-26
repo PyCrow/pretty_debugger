@@ -5,10 +5,13 @@ from time import time
 from .cache import PrettyCache
 
 
+non_exponent = lambda n, round_to: f"%.{round_to}f" % n
+
+
 def pretty_wrapper(
         logger: Logger,
         debug_level: int = None,
-        round_exec_time: int = 6,
+        round_exec_time: int = 4,
 ):
     """
     Wraps a function to log its execution, including all args, kwargs,
@@ -93,7 +96,7 @@ def pretty_wrapper(
             else:
                 msg = f"⮞{result}"
             finally:
-                stop_time = round(time() - start_time, round_exec_time)
+                stop_time = non_exponent(time() - start_time, round_exec_time)
                 logger.log(debug_level,
                            f"{get_prefix()}└{msg}  ({stop_time}s)")
 
