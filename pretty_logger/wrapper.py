@@ -18,6 +18,7 @@ def pretty_wrapper(
     code execution or errors.
 
     Example:
+    ```
     ┯
     ├─⮞foobar(
     │    some_arg=0,
@@ -32,14 +33,17 @@ def pretty_wrapper(
     ┊  ┊  └X <Exception('SOME TEST EXCEPTION')>  (0.0s)
     ┊  └X <Exception('SOME TEST EXCEPTION')>  (1.0152s)
     ┷
+    ```
 
     :param logger: Logger object must contain the 'level' attribute,
         the 'log' method, and HAVE THE 'utf-8' ENCODING.
+
     :param debug_level: Custom debug level. If not specified, the
         logger debug level or WARNING level is used, whichever is higher.
-    :param round_exec_time: Round the execution time to N after the
-        decimal point
-    :return: Wrapped function
+
+    :param round_exec_time: Round the execution time to N after the decimal point
+
+    :returns: Wrapped function
     """
     # Validate logger
     if not PrettyCache.is_logger(logger):

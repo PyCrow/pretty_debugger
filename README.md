@@ -5,6 +5,7 @@ Wrapper does not make any changes that affect the result of
 code execution or errors.
 
 Example:
+```
 ┯
 ├─⮞foobar(
 │    some_arg=0,
@@ -19,11 +20,14 @@ Example:
 ┊  ┊  └X <Exception('SOME TEST EXCEPTION')>  (0.0s)
 ┊  └X <Exception('SOME TEST EXCEPTION')>  (1.0152s)
 ┷
+```
 
-Param logger: Logger object must contain the 'level' attribute,
+Param `logger`: Logger object must contain the 'level' attribute,
     the 'log' method, and HAVE THE 'utf-8' ENCODING.
-Param debug_level: Custom debug level. If not specified, the
+
+Param `debug_level`: Custom debug level. If not specified, the
     logger debug level or WARNING level is used, whichever is higher.
-Param round_exec_time: Round the execution time to N after the decimal point
+
+Param `round_exec_time`: Round the execution time to N after the decimal point
 
 Returns: Wrapped function
