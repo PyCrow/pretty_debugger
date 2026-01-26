@@ -1,10 +1,15 @@
 import inspect
 from logging import Logger, WARNING
+from time import time
 
 from .cache import PrettyCache
 
 
-def pretty_wrapper(logger: Logger, debug_level: int = None):
+def pretty_wrapper(
+        logger: Logger,
+        debug_level: int = None,
+        round_exec_time: int = 6,
+):
     """
     Wraps a function to log its execution, including all args, kwargs,
     execution result, and errors.
@@ -20,18 +25,20 @@ def pretty_wrapper(logger: Logger, debug_level: int = None):
     ┊  ├─⮞plus_one(
     ┊  │    some_arg=0,
     ┊  │  )
-    ┊  ┊  └⮞1
+    ┊  ┊  └⮞1  (1.0152s)
     ┊  ├─⮞exception_func(
     ┊  │    this_is_kwarg=True,
     ┊  │  )
-    ┊  ┊  └X <Exception('SOME TEST EXCEPTION')>
-    ┊  └X <Exception('SOME TEST EXCEPTION')>
+    ┊  ┊  └X <Exception('SOME TEST EXCEPTION')>  (0.0s)
+    ┊  └X <Exception('SOME TEST EXCEPTION')>  (1.0152s)
     ┷
 
     :param logger: Logger object must contain the 'level' attribute,
         the 'log' method, and HAVE THE 'utf-8' ENCODING.
     :param debug_level: Custom debug level. If not specified, the
         logger debug level or WARNING level is used, whichever is higher.
+    :param round_exec_time: Round the execution time to N after the
+        decimal point
     :return: Wrapped function
     """
     # Validate logger
@@ -72,14 +79,20 @@ def pretty_wrapper(logger: Logger, debug_level: int = None):
             cache.level += 1
 
             # Execution
+            start_time = time()
+            msg = "<pretty_wrapper: UNHANDLED EXCEPTION OCCURRED>"  # var to avoid NameError
             try:
                 result = func(*args, **kwargs)
             except Exception as e:
-                logger.log(debug_level, f"{get_prefix()}└X <{repr(e)}>")
+                msg = f"X <{repr(e)}>"
                 raise
             else:
-                logger.log(debug_level, f"{get_prefix()}└⮞{result}")
+                msg = f"⮞{result}"
             finally:
+                stop_time = round(time() - start_time, round_exec_time)
+                logger.log(debug_level,
+                           f"{get_prefix()}└{msg}  ({stop_time}s)")
+
                 cache.level -= 1
 
                 # Finish line

@@ -1,5 +1,6 @@
 import logging
 import unittest
+from time import sleep
 
 from pretty_logger import pretty_wrapper
 
@@ -18,6 +19,7 @@ def foobar(some_arg: int):
 
 @pretty_wrapper(logger)
 def plus_one(some_arg):
+    sleep(1)
     return some_arg + 1
 
 @pretty_wrapper(logger)
