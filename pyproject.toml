@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pretty_logger"
+version = "0.1.0"
+authors = [
+  { name = "PyCrow" },
+]
+description = "A Python package for easy and convenient debugging"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Logging",
+]
+dependencies = [
+    "colorama>=0.4.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com"
+"Bug Tracker" = "https://github.com/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pretty_logger*"]
