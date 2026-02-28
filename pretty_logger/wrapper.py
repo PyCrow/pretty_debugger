@@ -18,24 +18,6 @@ def pretty_wrapper(
     Wrapper does not make any changes that affect the result of
     code execution or errors.
 
-    Example:
-    ```
-    ┯
-    ├─⮞foobar(
-    │    some_arg=0,
-    │  )
-    ┊  ├─⮞plus_one(
-    ┊  │    some_arg=0,
-    ┊  │  )
-    ┊  ┊  └⮞1  (1.0152s)
-    ┊  ├─⮞exception_func(
-    ┊  │    this_is_kwarg=True,
-    ┊  │  )
-    ┊  ┊  └X <Exception('SOME TEST EXCEPTION')>  (0.0s)
-    ┊  └X <Exception('SOME TEST EXCEPTION')>  (1.0152s)
-    ┷
-    ```
-
     :param logger: Logger object must contain the 'level' attribute,
         the 'log' method, and HAVE THE 'utf-8' ENCODING.
 
@@ -70,9 +52,9 @@ def pretty_wrapper(
 
             # Print args and kwargs
             if not args and not kwargs:
-                log(logger, debug_level, f"{prefix}├─⮞{func.__name__}()")
+                log(logger, debug_level, f"{prefix}├─►{func.__name__}()")
             else:
-                log(logger, debug_level, f"{prefix}├─⮞{func.__name__}(")
+                log(logger, debug_level, f"{prefix}├─►{func.__name__}(")
                 args_kwargs = dict(zip(
                     list(inspect.signature(func).parameters.keys()),
                     args
@@ -92,7 +74,7 @@ def pretty_wrapper(
                 msg = f"X <{repr(e)}>"
                 raise
             else:
-                msg = f"⮞ {result}"
+                msg = f"► {result}"
             finally:
                 stop_time = non_expo(time() - start_time, round_exec_time)
                 log(logger, debug_level, f"{get_prefix()}└{msg}  ({stop_time}s)")
