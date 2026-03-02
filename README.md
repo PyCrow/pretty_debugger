@@ -7,7 +7,7 @@ code execution or errors.
 Usage:
 ```python
 import logging
-from pretty_logger import pretty_wrapper
+from pretty_debugger import pretty_wrapper
 
 logger = logging.getLogger(__name__)
 
