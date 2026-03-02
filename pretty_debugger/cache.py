@@ -16,15 +16,3 @@ class PrettyCache:
     @level.setter
     def level(self, level):
         self.__level = level
-
-    @staticmethod
-    def is_logger(logger) -> bool:
-        """ Checks if 'logger' has logging functionality:
-        1. 'level' attribute
-        2. 'log' method
-        """
-        return (
-            hasattr(logger, 'level')
-            and hasattr(logger, 'log')
-            and callable(logger.log)
-        )

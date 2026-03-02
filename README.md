@@ -4,6 +4,8 @@ execution result, and errors.
 Wrapper does not make any changes that affect the result of
 code execution or errors.
 
+SUPPORTS: default 'logging.Logger' and 'loguru.logger'
+
 Usage:
 ```python
 import logging
@@ -46,8 +48,8 @@ Output when using nested wrapped functions:
 ┷
 ```
 
-Param `logger`: Logger object must contain the 'level' attribute,
-    the 'log' method, and HAVE THE 'utf-8' ENCODING.
+Param `logger`: Logger (of default 'logging' or 'loguru' module)
+    with encoding 'utf-8'.
 
 Param `debug_level`: Custom debug level. If not specified, the
     logger debug level or WARNING level is used, whichever is higher.

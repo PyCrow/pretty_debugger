@@ -3,7 +3,7 @@ from logging import Logger, WARNING
 from time import time
 
 from .cache import PrettyCache
-from .utils import log, non_expo
+from .utils import log, non_expo, is_logger, is_default_logging, is_loguru
 
 
 def pretty_wrapper(
@@ -18,8 +18,8 @@ def pretty_wrapper(
     Wrapper does not make any changes that affect the result of
     code execution or errors.
 
-    :param logger: Logger object must contain the 'level' attribute,
-        the 'log' method, and HAVE THE 'utf-8' ENCODING.
+    :param logger: Logger (of default 'logging' or 'loguru' module)
+        with encoding 'utf-8'.
 
     :param debug_level: Custom debug level. If not specified, the
         logger debug level or WARNING level is used, whichever is higher.
@@ -29,11 +29,19 @@ def pretty_wrapper(
     :returns: Wrapped function
     """
     # Validate logger
-    if not PrettyCache.is_logger(logger):
-        raise TypeError("Logger object must contain a 'level' attribute"
+    if not is_logger(logger):
+        raise TypeError("Logger object must contain a 'level' int attribute"
                         " and a 'log' method.")
+
     if debug_level is None:
-        debug_level = max(logger.level, WARNING)
+        if is_default_logging(logger):
+            # Default logging support
+            debug_level = max(logger.level, WARNING)
+        elif is_loguru(logger):
+            # Loguru support
+            debug_level = logger._core.min_level
+        else:
+            raise TypeError(f"Unsupported logger type: {type(logger)}")
 
     def _wrapper(func):
         cache = PrettyCache()
@@ -67,7 +75,7 @@ def pretty_wrapper(
 
             # Execution
             start_time = time()
-            msg = "<pretty_wrapper: UNHANDLED EXCEPTION OCCURRED>"  # var to avoid NameError
+            msg = "<pretty_debugger: UNHANDLED EXCEPTION OCCURRED>"  # var to avoid NameError
             try:
                 result = func(*args, **kwargs)
             except Exception as e:
