@@ -21,8 +21,8 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-"Homepage" = "https://github.com"
-"Bug Tracker" = "https://github.com/issues"
+"Homepage" = "https://github.com/PyCrow/pretty_logger/"
+"Bug Tracker" = "https://github.com/PyCrow/pretty_logger/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
