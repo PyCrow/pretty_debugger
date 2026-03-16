@@ -21,30 +21,29 @@ foo("world")
 ```
 
 Corresponding output:
-```
+```text
 ┯
-├─►foo(
-│    bar=world,
-│  )
-┊  └► Hello, world  (0.0000s)
+├─► foo(  ---  [NONREPO/test.py:6]
+│      bar='world',
+│   )
+┊   └► 'Hello, world'  [0.0000s]
 ┷
 ```
 
 Output when using nested wrapped functions:
-```
+```text
 ┯
-├─►foobar(
-│    some_arg=0,
-│  )
-┊  ├─►plus_one(
-┊  │    some_arg=0,
-┊  │  )
-┊  ┊  └► 1  (1.0011s)
-┊  ├─►exception_func(
-┊  │    this_is_kwarg=True,
-┊  │  )
-┊  ┊  └X <Exception('SOME TEST EXCEPTION')>  (0.0000s)
-┊  └X <Exception('SOME TEST EXCEPTION')>  (1.0022s)
+├─► main_task()  ---  [NONREPO/test.py:12]
+┊   ├─► get_data(  ---  [NONREPO/test.py:24]
+┊   │      arg=42,
+┊   │      kwarg='active',
+┊   │   )
+┊   ┊   └► 420  [0.0000s]
+┊   ├─► check_status()  ---  [NONREPO/test.py:29]
+┊   ┊   └► None  [0.0000s]
+┊   ├─► generate_error()  ---  [NONREPO/test.py:34]
+┊   ┊   └X <RuntimeError('Critical Failure')>  [0.0000s]
+┊   └X <RuntimeError('Critical Failure')>  [0.0003s]
 ┷
 ```
 
@@ -60,4 +59,10 @@ Returns: Wrapped function
 
 ---
 
-Zero-dependency: Package does not require installation of additional libraries
+Zero-dependency:
+    Package does not require installation of additional libraries.
+    Only default packages are included:
+    [inspect](https://docs.python.org/3/library/inspect.html),
+    [logging](https://docs.python.org/3/library/logging.html),
+    [os](https://docs.python.org/3/library/os.html),
+    and [time](https://docs.python.org/3/library/time.html).

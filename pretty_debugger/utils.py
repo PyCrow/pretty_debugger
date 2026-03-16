@@ -1,8 +1,10 @@
 from logging import makeLogRecord, Logger
 
-PRETTY_LOGGER_NAME = "PRETTY"
 PRETTY_LEVEL_NAME = "PRETTY"
 PRETTY_LINENO = 0
+PRETTY_LOGGER_NAME = ""
+PRETTY_FUNC_NAME = ""
+PRETTY_SRC_PATH = ""
 
 
 def non_expo(n: float, round_to: int):
@@ -39,6 +41,9 @@ def is_loguru(logger) -> bool:
 
 def _update_level_line(record):
     record['level'].name = PRETTY_LEVEL_NAME
+    record['name'] = PRETTY_SRC_PATH
+    record['file'].path = PRETTY_SRC_PATH
+    record['function'] = PRETTY_FUNC_NAME
     record['line'] = PRETTY_LINENO
 
 
@@ -50,9 +55,11 @@ def log(logger, level: int, message: str, *args):
     else:
         logger.handle(makeLogRecord({
             'args': args,
+            'funcName': PRETTY_FUNC_NAME,
             'levelname': PRETTY_LEVEL_NAME,
             'levelno': level,
             'lineno': PRETTY_LINENO,
             'msg': message,
             'name': PRETTY_LOGGER_NAME,
+            'pathname': PRETTY_SRC_PATH,
         }))

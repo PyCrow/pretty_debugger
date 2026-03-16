@@ -1,5 +1,6 @@
 import inspect
-from logging import Logger, WARNING
+from logging import WARNING
+from os import path
 from time import time
 
 from .cache import PrettyCache
@@ -7,7 +8,7 @@ from .utils import log, non_expo, is_logger, is_default_logging, is_loguru
 
 
 def pretty_wrapper(
-        logger: Logger,
+        logger,
         debug_level: int = None,
         round_exec_time: int = 4,
 ):
@@ -24,7 +25,8 @@ def pretty_wrapper(
     :param debug_level: Custom debug level. If not specified, the
         logger debug level or WARNING level is used, whichever is higher.
 
-    :param round_exec_time: Round the execution time to N after the decimal point
+    :param round_exec_time: Round the execution time to N after the decimal point.
+        By default - 4.
 
     :returns: Wrapped function
     """
@@ -36,7 +38,7 @@ def pretty_wrapper(
     if debug_level is None:
         if is_default_logging(logger):
             # Default logging support
-            debug_level = max(logger.level, WARNING)
+            debug_level = max(logger.level, WARNING)  # WARNING - base logging.Logger level if no level is set
         elif is_loguru(logger):
             # Loguru support
             debug_level = logger._core.min_level
@@ -46,11 +48,9 @@ def pretty_wrapper(
     def _wrapper(func):
         cache = PrettyCache()
 
-        sep = '  '
+        sep = '   '
 
         def _logged_function(*args, **kwargs):
-            nonlocal logger, debug_level
-
             get_prefix = lambda: f"┊{sep}" * cache.level
             prefix = get_prefix()
 
@@ -59,17 +59,22 @@ def pretty_wrapper(
                 log(logger, debug_level, "┯")
 
             # Print args and kwargs
+            lineno = func.__code__.co_firstlineno
+            filename = path.basename(func.__code__.co_filename)
+            dirname = path.basename(path.dirname(func.__code__.co_filename))
+            relative_path = f"{dirname}/{filename}:{lineno}"
+            run_func_msg = f"{prefix}├─► {func.__name__}(%s  ---  [{relative_path}]"
             if not args and not kwargs:
-                log(logger, debug_level, f"{prefix}├─►{func.__name__}()")
+                log(logger, debug_level, run_func_msg % ")")
             else:
-                log(logger, debug_level, f"{prefix}├─►{func.__name__}(")
+                log(logger, debug_level, run_func_msg % "")
                 args_kwargs = dict(zip(
                     list(inspect.signature(func).parameters.keys()),
                     args
                 ))
                 args_kwargs.update(kwargs)
                 for k, v in args_kwargs.items():
-                    log(logger, debug_level, f"{prefix}│{sep * 2}{k}={v},")
+                    log(logger, debug_level, f"{prefix}│{sep * 2}{k}={repr(v)},")
                 log(logger, debug_level, f"{prefix}│{sep})")
             cache.level += 1
 
@@ -82,10 +87,10 @@ def pretty_wrapper(
                 msg = f"X <{repr(e)}>"
                 raise
             else:
-                msg = f"► {result}"
+                msg = f"► {repr(result)}"
             finally:
                 stop_time = non_expo(time() - start_time, round_exec_time)
-                log(logger, debug_level, f"{get_prefix()}└{msg}  ({stop_time}s)")
+                log(logger, debug_level, f"{get_prefix()}└{msg}  [{stop_time}s]")
 
                 cache.level -= 1
 
